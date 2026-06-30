@@ -180,9 +180,9 @@
         </filter>
     </svg>
 
-    <!-- <link rel="icon" href="wp-content/uploads/2026/05/cropped-ico-01-01-scaled-1-32x32.png" sizes="32x32" />
-    <link rel="icon" href="wp-content/uploads/2026/05/cropped-ico-01-01-scaled-1-192x192.png" sizes="192x192" />
-    <link rel="apple-touch-icon" href="wp-content/uploads/2026/05/cropped-ico-01-01-scaled-1-180x180.png" /> -->
+    <link rel="icon" href="{{asset('assets/images/logo.png') }}" sizes="32x32" />
+    <link rel="icon" href="{{asset('assets/images/logo.png') }}" sizes="192x192" />
+    <link rel="apple-touch-icon" href="{{asset('assets/images/logo.png') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
       @stack('styles')
 </head>
