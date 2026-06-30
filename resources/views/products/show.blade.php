@@ -1824,15 +1824,15 @@
     .dbe-lightbox-stage { position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .dbe-lightbox-img { max-width: 92vw; max-height: 88vh; object-fit: contain; transform-origin: center center; transition: transform .15s ease-out; cursor: grab; user-select: none; -webkit-user-drag: none; will-change: transform; }
     .dbe-lightbox-img.dragging { cursor: grabbing; transition: none; }
-    .dbe-lb-btn { position: absolute; background: rgba(255,255,255,.12); color: #fff; border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; z-index: 2; }
-    .dbe-lb-btn:hover { background: rgba(255,255,255,.28); }
+    .dbe-lb-btn { position: absolute; background: rgba(0,0,0,.5); color: #fff; border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; z-index: 3; }
+    .dbe-lb-btn:hover { background: rgba(0,0,0,.75); }
     .dbe-lb-close { top: 20px; right: 24px; width: 46px; height: 46px; border-radius: 50%; font-size: 26px; line-height: 1; }
     .dbe-lb-nav { top: 50%; transform: translateY(-50%); width: 52px; height: 52px; border-radius: 50%; font-size: 30px; line-height: 1; }
     .dbe-lb-prev { left: 24px; }
     .dbe-lb-next { right: 24px; }
-    .dbe-lb-zoom { bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; background: transparent; }
-    .dbe-lb-zoom button { width: 46px; height: 46px; border-radius: 50%; font-size: 22px; background: rgba(255,255,255,.12); color: #fff; border: 0; cursor: pointer; transition: background .2s; }
-    .dbe-lb-zoom button:hover { background: rgba(255,255,255,.28); }
+    .dbe-lb-zoom { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; background: transparent; z-index: 2; }
+    .dbe-lb-zoom button { width: 46px; height: 46px; border-radius: 50%; font-size: 22px; background: rgba(0,0,0,.5); color: #fff; border: 0; cursor: pointer; transition: background .2s; }
+    .dbe-lb-zoom button:hover { background: rgba(0,0,0,.75); }
     .dbe-lb-counter { position: absolute; top: 24px; left: 24px; color: #fff; font-size: .9rem; background: rgba(0,0,0,.4); padding: 4px 12px; border-radius: 20px; z-index: 2; }
     @media (max-width: 600px) {
         .dbe-lb-nav { width: 42px; height: 42px; font-size: 24px; }
@@ -1870,6 +1870,11 @@
     .dbe-tech th, .dbe-tech td { border: 1px solid #eee; padding: 10px 14px; font-size: .92rem; text-align: left; }
     .dbe-tech th { background: #f7f7f7; width: 42%; font-weight: 600; }
     @media (max-width: 860px) { .dbe-product { grid-template-columns: 1fr; } }
+
+    /* Productos relacionados: rejilla responsiva (5 → 3 → 2 columnas) */
+    .dbe-related-grid { grid-template-columns: repeat(5, 1fr); }
+    @media (max-width: 991px) { .dbe-related-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .dbe-related-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
 </style>
 @endpush
 
@@ -1931,7 +1936,19 @@
                         var stage = document.getElementById('dbe-lb-stage');
                         var counter = document.getElementById('dbe-lb-counter');
 
+                        // Limita el desplazamiento para que la imagen ampliada
+                        // nunca se salga de su sitio (siempre cubre el centro).
+                        function clampPan() {
+                            var vw = window.innerWidth, vh = window.innerHeight;
+                            var w = img.clientWidth * scale;
+                            var h = img.clientHeight * scale;
+                            var maxX = Math.max(0, (w - vw) / 2);
+                            var maxY = Math.max(0, (h - vh) / 2);
+                            tx = Math.min(maxX, Math.max(-maxX, tx));
+                            ty = Math.min(maxY, Math.max(-maxY, ty));
+                        }
                         function applyTransform() {
+                            clampPan();
                             img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
                             img.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
                         }
@@ -2001,17 +2018,35 @@
                             dragging = false; img.classList.remove('dragging');
                         });
 
-                        // Tactile : glisser pour déplacer
-                        img.addEventListener('touchstart', function (e) {
-                            if (scale <= 1 || e.touches.length !== 1) return;
-                            dragging = true;
-                            sx = e.touches[0].clientX - tx; sy = e.touches[0].clientY - ty;
+                        // Tactile : glisser para mover (con zoom) o deslizar para
+                        // cambiar de imagen (sin zoom).
+                        var swipeStartX = 0, swipeStartY = 0, swiping = false;
+                        stage.addEventListener('touchstart', function (e) {
+                            if (e.touches.length !== 1) return;
+                            swipeStartX = e.touches[0].clientX;
+                            swipeStartY = e.touches[0].clientY;
+                            if (scale > 1) {
+                                dragging = true; swiping = false;
+                                sx = e.touches[0].clientX - tx; sy = e.touches[0].clientY - ty;
+                            } else {
+                                swiping = true;
+                            }
                         }, { passive: true });
-                        img.addEventListener('touchmove', function (e) {
+                        stage.addEventListener('touchmove', function (e) {
                             if (!dragging || e.touches.length !== 1) return;
                             tx = e.touches[0].clientX - sx; ty = e.touches[0].clientY - sy; applyTransform();
                         }, { passive: true });
-                        img.addEventListener('touchend', function () { dragging = false; });
+                        stage.addEventListener('touchend', function (e) {
+                            if (swiping && scale <= 1 && images.length > 1) {
+                                var t = e.changedTouches[0];
+                                var dx = t.clientX - swipeStartX;
+                                var dy = t.clientY - swipeStartY;
+                                if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
+                                    dbeNav(dx < 0 ? 1 : -1);
+                                }
+                            }
+                            dragging = false; swiping = false;
+                        });
 
                         // Clic sur le fond pour fermer
                         lb.addEventListener('click', function (e) {
@@ -2136,7 +2171,7 @@
                         <section class="related products">
                             <h2>Productos relacionados</h2>
                             <div class="woocommerce columns-5 ">
-                                <ul class="products columns-5 tablet-columns-3 mobile-columns-2" style="display:grid;grid-template-columns:repeat(5,1fr);gap:20px;list-style:none;padding:0;margin:0;">
+                                <ul class="products columns-5 tablet-columns-3 mobile-columns-2 dbe-related-grid" style="display:grid;gap:20px;list-style:none;padding:0;margin:0;">
                                     @foreach($relatedProducts as $related)
                                         <li class="product type-product status-publish instock has-post-thumbnail shipping-taxable purchasable product-type-simple" style="width:auto;margin:0;float:none;">
                                             <div class="product-loop-wrapper">

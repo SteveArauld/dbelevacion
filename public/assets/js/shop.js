@@ -231,7 +231,7 @@
         root.innerHTML =
             '<div class="woocommerce">' +
                 '<form class="woocommerce-cart-form" onsubmit="return false;">' +
-                    '<table class="shop_table shop_table_responsive cart woocommerce-cart-form__contents" cellspacing="0">' +
+                    '<table class="shop_table cart woocommerce-cart-form__contents" cellspacing="0">' +
                         '<thead><tr>' +
                             '<th class="product-remove">&nbsp;</th>' +
                             '<th class="product-thumbnail">&nbsp;</th>' +
@@ -246,7 +246,7 @@
                 '<div class="cart-collaterals">' +
                     '<div class="cart_totals">' +
                         '<h2>Totales del carrito</h2>' +
-                        '<table cellspacing="0" class="shop_table shop_table_responsive"><tbody>' +
+                        '<table cellspacing="0" class="shop_table"><tbody>' +
                             '<tr class="cart-subtotal"><th>Subtotal</th><td data-title="Subtotal">' + priceHtml(cartTotal()) + '</td></tr>' +
                             '<tr class="woocommerce-shipping-totals shipping"><th>Envío</th><td data-title="Envío">Envío gratuito<div class="shipping-note">Entrega estimada en 14 días laborables.</div></td></tr>' +
                             '<tr class="order-total"><th>Total</th><td data-title="Total"><strong>' + priceHtml(cartTotal()) + '</strong></td></tr>' +
@@ -308,7 +308,8 @@
                     slug: btn.dataset.slug, name: btn.dataset.name,
                     price: btn.dataset.price, image: btn.dataset.image, url: btn.dataset.url
                 }, qty);
-                openCartPanel();
+                // No abrimos el panel del carrito: addToCart() ya muestra un
+                // mensaje (toast). El panel solo se abre con el icono del carrito.
             });
         });
     }

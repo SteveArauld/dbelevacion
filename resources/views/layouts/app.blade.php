@@ -7,6 +7,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    {{-- CSS crítico anti-FOUC: fija el estado inicial del menú móvil antes de
+         que carguen las hojas de estilo externas, para que no aparezca un
+         "flash" del menú lateral ni de sus flechas al cargar la página. --}}
+    <style>
+        /* El menú lateral móvil arranca fuera de la pantalla. */
+        .sidebar-menu {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 90%;
+            z-index: 200;
+            transform: translateX(-100%);
+        }
+        /* El overlay arranca oculto. */
+        #woostify-overlay {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        /* En escritorio: nada de menú móvil, flechas móviles ni botón hamburguesa. */
+        @media (min-width: 992px) {
+            .primary-navigation.primary-mobile-navigation,
+            .primary-navigation.categories-mobile-menu,
+            .mobile-nav-tab,
+            .wrap-toggle-sidebar-menu {
+                display: none !important;
+            }
+        }
+        /* En móvil: el menú/búsqueda en línea de la cabecera permanecen ocultos
+           (solo se usan dentro del menú lateral). */
+        @media (max-width: 991px) {
+            .site-header-inner .site-navigation,
+            .site-header-inner .site-search {
+                display: none;
+            }
+        }
+    </style>
+
   {{-- Bootstrap 5 --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -268,7 +307,7 @@
             checkout: "{{ route('checkout') }}"
         };
     </script>
-    <script src="{{ asset('assets/js/shop.js') }}?v=4"></script>
+    <script src="{{ asset('assets/js/shop.js') }}?v=6"></script>
     @stack('scripts')
 
 </body>

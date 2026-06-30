@@ -185,19 +185,30 @@
              </div>
          </div>
      </div>
-     <div class="elementor-element elementor-element-7f080e2 e-flex e-con-boxed e-con e-parent" data-id="7f080e2" data-element_type="container" data-e-type="container" data-settings='{"background_background":"classic"}'>
+   <div class="elementor-element elementor-element-7f080e2 e-flex e-con-boxed e-con e-parent" data-id="7f080e2" data-element_type="container" data-e-type="container" data-settings='{"background_background":"classic"}'>
          <div class="e-con-inner">
              <div class="elementor-element elementor-element-c601897 e-con-full e-flex e-con e-child" data-id="c601897" data-element_type="container" data-e-type="container">
                  <div class="elementor-element elementor-element-8e24f6c elementor-widget elementor-widget-heading" data-id="8e24f6c" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
                      <h2 class="elementor-heading-title elementor-size-default">Suscríbase a nuestro boletín para recibir ofertas y promociones exclusivas sobre nuestros productos.</h2>
                  </div>
                  <div class="elementor-element elementor-element-c6e6d11 elementor-button-align-stretch elementor-widget elementor-widget-form" data-id="c6e6d11" data-element_type="widget" data-e-type="widget" data-settings='{"step_next_label":"Next","step_previous_label":"Previous","button_width":"100","step_type":"number_text","step_icon_shape":"circle"}' data-widget_type="form.default">
-                     <form class="elementor-form" method="post" action="{{ route('newsletter.subscribe') }}" aria-label="New Form">
+                     <form class="elementor-form" method="post" id="newsletter-form" aria-label="New Form">
                          @csrf
                          <input type="hidden" name="post_id" value="2880" />
                          <input type="hidden" name="form_id" value="c6e6d11" />
                          <input type="hidden" name="referer_title" value="Carretilla elevadora diésel Hyundai 30D-7E - nom-domaine" />
                          <input type="hidden" name="queried_id" value="394" />
+                         
+                         <!-- Message de succès (caché par défaut) -->
+                         <div id="success-message" style="display: none; background-color: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                             ¡Gracias por suscribirse! Pronto recibirá nuestras ofertas exclusivas.
+                         </div>
+                         
+                         <!-- Message d'erreur (caché par défaut) -->
+                         <div id="error-message" style="display: none; background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                             Por favor, complete todos los campos requeridos.
+                         </div>
+                         
                          <div class="elementor-form-fields-wrapper elementor-labels-">
                              <div class="elementor-field-type-email elementor-field-group elementor-column elementor-field-group-email elementor-col-100 elementor-field-required">
                                  <label for="form-field-email" class="elementor-field-label elementor-screen-only">Email</label>
@@ -213,7 +224,7 @@
                                  </div>
                              </div>
                              <div class="elementor-field-group elementor-column elementor-field-type-submit elementor-col-100 e-form__buttons">
-                                 <button class="elementor-button elementor-size-sm" type="submit">
+                                 <button class="elementor-button elementor-size-sm" type="submit" id="submit-button">
                                      <span class="elementor-button-content-wrapper">
                                          <span class="elementor-button-text">Suscríbase</span>
                                      </span>
@@ -458,6 +469,48 @@
              </div>
          </div>
      </div>
+
+     <script>
+         document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+             e.preventDefault();
+             
+             const form = this;
+             const email = document.getElementById('form-field-email').value;
+             const terms = document.getElementById('form-field-field_5045203').checked;
+             const successMessage = document.getElementById('success-message');
+             const errorMessage = document.getElementById('error-message');
+             const submitButton = document.getElementById('submit-button');
+             
+             successMessage.style.display = 'none';
+             errorMessage.style.display = 'none';
+             
+             if (!email || !terms) {
+                 errorMessage.style.display = 'block';
+                 return;
+             }
+             
+             submitButton.disabled = true;
+             submitButton.querySelector('.elementor-button-text').textContent = 'Enviando...';
+             
+             setTimeout(function() {
+                 successMessage.style.display = 'block';
+                 
+                 form.reset();
+                 
+                 submitButton.disabled = false;
+                 submitButton.querySelector('.elementor-button-text').textContent = 'Suscríbase';
+                 
+                 successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 
+                 setTimeout(function() {
+                     successMessage.style.display = 'none';
+                 }, 5000);
+                 
+            
+                 
+             }, 1500); 
+         });
+     </script>
      <div class="elementor-element elementor-element-7b0af5a e-flex e-con-boxed e-con e-parent" data-id="7b0af5a" data-element_type="container" data-e-type="container" data-settings='{"background_background":"classic"}'>
          <div class="e-con-inner">
              <div class="elementor-element elementor-element-49385f4 elementor-icon-list--layout-traditional elementor-list-item-link-full_width elementor-widget elementor-widget-icon-list" data-id="49385f4" data-element_type="widget" data-e-type="widget" data-widget_type="icon-list.default">
@@ -520,68 +573,68 @@
 
          <nav class="main-navigation" data-menu="main" aria-label="Navegación principal">
              <ul id="menu-3" class="primary-navigation primary-mobile-navigation">
-                 <li id="menu-item-3169" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-2872 current_page_item menu-item-3169"><a href="index.html"><span class="menu-item-text">nom-domaine</span></a></li>
-                 <li id="menu-item-3168" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3168"><a href="transpaletas/index.html"><span class="menu-item-text">Transpaletas</span></a></li>
-                 <li id="menu-item-3170" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-3170"><a href="#"><span class="menu-item-text">Carretillas</span><span class="menu-item-arrow arrow-icon"><span class="woostify-svg-icon icon-angle-down"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17" viewBox="0 0 17 17">
-                                     <g>
-                                     </g>
+                 <li class="menu-item {{ request()->routeIs('home') ? 'current-menu-item' : '' }}">
+                     <a href="{{ route('home') }}"><span class="menu-item-text">nom-domaine</span></a>
+                 </li>
+                 <li class="menu-item {{ request()->routeIs('category.transpaletas') ? 'current-menu-item' : '' }}">
+                     <a href="{{ route('category.transpaletas') }}"><span class="menu-item-text">Transpaletas</span></a>
+                 </li>
+                 <li class="menu-item menu-item-has-children {{ request()->routeIs('category.carros-transporte') || request()->routeIs('category.carretillas') ? 'current-menu-item' : '' }}">
+                     <a href="#"><span class="menu-item-text">Carretillas</span>
+                         <span class="menu-item-arrow arrow-icon">
+                             <span class="woostify-svg-icon icon-angle-down">
+                                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
                                      <path d="M16.354 5.075l-7.855 7.854-7.853-7.854 0.707-0.707 7.145 7.146 7.148-7.147 0.708 0.708z" fill="#000000" />
                                  </svg>
-                             </span></span></a>
+                             </span>
+                         </span>
+                     </a>
                      <ul class="sub-menu">
-                         <li id="menu-item-3159" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3159"><a href="carros-de-transporte/index.html"><span class="menu-item-text">Carros de transporte</span></a></li>
-                         <li id="menu-item-3160" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3160"><a href="carretillas-elevadoras/index.html"><span class="menu-item-text">Carretillas elevadoras</span></a></li>
+                         <li class="menu-item {{ request()->routeIs('category.carros-transporte') ? 'current-menu-item' : '' }}">
+                             <a href="{{ route('category.carros-transporte') }}"><span class="menu-item-text">Carros de transporte</span></a>
+                         </li>
+                         <li class="menu-item {{ request()->routeIs('category.carretillas') ? 'current-menu-item' : '' }}">
+                             <a href="{{ route('category.carretillas') }}"><span class="menu-item-text">Carretillas elevadoras</span></a>
+                         </li>
                      </ul>
                  </li>
-                 <li id="menu-item-3171" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-3171"><a href="#"><span class="menu-item-text">Otros</span><span class="menu-item-arrow arrow-icon"><span class="woostify-svg-icon icon-angle-down"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17" viewBox="0 0 17 17">
-                                     <g>
-                                     </g>
+                 <li class="menu-item menu-item-has-children {{ request()->routeIs(['category.elevadores', 'category.salvaescaleras', 'category.plataformas', 'category.mesas', 'category.apiladores']) ? 'current-menu-item' : '' }}">
+                     <a href="#"><span class="menu-item-text">Otros</span>
+                         <span class="menu-item-arrow arrow-icon">
+                             <span class="woostify-svg-icon icon-angle-down">
+                                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17">
                                      <path d="M16.354 5.075l-7.855 7.854-7.853-7.854 0.707-0.707 7.145 7.146 7.148-7.147 0.708 0.708z" fill="#000000" />
                                  </svg>
-                             </span></span></a>
+                             </span>
+                         </span>
+                     </a>
                      <ul class="sub-menu">
-                         <li id="menu-item-3162" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3162"><a href="elevadores-con-cesta/index.html"><span class="menu-item-text">Elevadores con cesta</span></a></li>
-                         <li id="menu-item-3161" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3161"><a href="carro-salvaescaleras/index.html"><span class="menu-item-text">Carro salvaescaleras</span></a></li>
-                         <li id="menu-item-3165" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3165"><a href="plataformas-de-tijera/index.html"><span class="menu-item-text">plataformas de tijera</span></a></li>
-                         <li id="menu-item-3167" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3167"><a href="mesas-elevadoras/index.html"><span class="menu-item-text">Mesas elevadoras</span></a></li>
-                         <li id="menu-item-3163" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3163"><a href="apiladores-de-gran-elevacion/index.html"><span class="menu-item-text">Apiladores de gran elevación</span></a></li>
+                         <li class="menu-item {{ request()->routeIs('category.elevadores') ? 'current-menu-item' : '' }}">
+                             <a href="{{ route('category.elevadores') }}"><span class="menu-item-text">Elevadores con cesta</span></a>
+                         </li>
+                         <li class="menu-item {{ request()->routeIs('category.salvaescaleras') ? 'current-menu-item' : '' }}">
+                             <a href="{{ route('category.salvaescaleras') }}"><span class="menu-item-text">Carro salvaescaleras</span></a>
+                         </li>
+                         <li class="menu-item {{ request()->routeIs('category.plataformas') ? 'current-menu-item' : '' }}">
+                             <a href="{{ route('category.plataformas') }}"><span class="menu-item-text">Plataformas de tijera</span></a>
+                         </li>
+                         <li class="menu-item {{ request()->routeIs('category.mesas') ? 'current-menu-item' : '' }}">
+                             <a href="{{ route('category.mesas') }}"><span class="menu-item-text">Mesas elevadoras</span></a>
+                         </li>
+                         <li class="menu-item {{ request()->routeIs('category.apiladores') ? 'current-menu-item' : '' }}">
+                             <a href="{{ route('category.apiladores') }}"><span class="menu-item-text">Apiladores de gran elevación</span></a>
+                         </li>
                      </ul>
                  </li>
-                 <li id="menu-item-3166" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3166"><a href="miniexcavadora/index.html"><span class="menu-item-text">Miniexcavadora</span></a></li>
-                 <li id="menu-item-3164" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3164"><a href="minilifts/index.html"><span class="menu-item-text">Minilifts</span></a></li>
-                 <li id="menu-item-3173" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3173"><a href="contacto/index.html"><span class="menu-item-text">Contacto</span></a></li>
-             </ul>
-             <ul id="menu-4" class="primary-navigation">
-                 <li id="menu-item-3169" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-2872 current_page_item menu-item-3169"><a href="index.html"><span class="menu-item-text">nom-domaine</span></a></li>
-                 <li id="menu-item-3168" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3168"><a href="transpaletas/index.html"><span class="menu-item-text">Transpaletas</span></a></li>
-                 <li id="menu-item-3170" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-3170"><a href="#"><span class="menu-item-text">Carretillas</span><span class="menu-item-arrow arrow-icon"><span class="woostify-svg-icon icon-angle-down"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17" viewBox="0 0 17 17">
-                                     <g>
-                                     </g>
-                                     <path d="M16.354 5.075l-7.855 7.854-7.853-7.854 0.707-0.707 7.145 7.146 7.148-7.147 0.708 0.708z" fill="#000000" />
-                                 </svg>
-                             </span></span></a>
-                     <ul class="sub-menu">
-                         <li id="menu-item-3159" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3159"><a href="carros-de-transporte/index.html"><span class="menu-item-text">Carros de transporte</span></a></li>
-                         <li id="menu-item-3160" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3160"><a href="carretillas-elevadoras/index.html"><span class="menu-item-text">Carretillas elevadoras</span></a></li>
-                     </ul>
+                 <li class="menu-item {{ request()->routeIs('category.miniexcavadora') ? 'current-menu-item' : '' }}">
+                     <a href="{{ route('category.miniexcavadora') }}"><span class="menu-item-text">Miniexcavadora</span></a>
                  </li>
-                 <li id="menu-item-3171" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-3171"><a href="#"><span class="menu-item-text">Otros</span><span class="menu-item-arrow arrow-icon"><span class="woostify-svg-icon icon-angle-down"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17" viewBox="0 0 17 17">
-                                     <g>
-                                     </g>
-                                     <path d="M16.354 5.075l-7.855 7.854-7.853-7.854 0.707-0.707 7.145 7.146 7.148-7.147 0.708 0.708z" fill="#000000" />
-                                 </svg>
-                             </span></span></a>
-                     <ul class="sub-menu">
-                         <li id="menu-item-3162" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3162"><a href="elevadores-con-cesta/index.html"><span class="menu-item-text">Elevadores con cesta</span></a></li>
-                         <li id="menu-item-3161" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3161"><a href="carro-salvaescaleras/index.html"><span class="menu-item-text">Carro salvaescaleras</span></a></li>
-                         <li id="menu-item-3165" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3165"><a href="plataformas-de-tijera/index.html"><span class="menu-item-text">plataformas de tijera</span></a></li>
-                         <li id="menu-item-3167" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3167"><a href="mesas-elevadoras/index.html"><span class="menu-item-text">Mesas elevadoras</span></a></li>
-                         <li id="menu-item-3163" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3163"><a href="apiladores-de-gran-elevacion/index.html"><span class="menu-item-text">Apiladores de gran elevación</span></a></li>
-                     </ul>
+                 <li class="menu-item {{ request()->routeIs('category.minilifts') ? 'current-menu-item' : '' }}">
+                     <a href="{{ route('category.minilifts') }}"><span class="menu-item-text">Minilifts</span></a>
                  </li>
-                 <li id="menu-item-3166" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3166"><a href="miniexcavadora/index.html"><span class="menu-item-text">Miniexcavadora</span></a></li>
-                 <li id="menu-item-3164" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3164"><a href="minilifts/index.html"><span class="menu-item-text">Minilifts</span></a></li>
-                 <li id="menu-item-3173" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3173"><a href="contacto/index.html"><span class="menu-item-text">Contacto</span></a></li>
+                 <li class="menu-item {{ request()->routeIs('contacto') ? 'current-menu-item' : '' }}">
+                     <a href="{{ route('contacto') }}"><span class="menu-item-text">Contacto</span></a>
+                 </li>
              </ul>
          </nav>
 
@@ -794,3 +847,42 @@
          </form>
      </div>
  </div>
+
+ {{-- Cierre del menú lateral móvil (overlay / icono X / tecla Escape) --}}
+ <script>
+     (function () {
+         var html = document.documentElement;
+
+         // closeAll() es llamado por navigation.min.js al abrir el menú.
+         // Lo definimos para evitar el ReferenceError y cerrar otros paneles
+         // (carrito, búsqueda) SIN cerrar el menú que se acaba de abrir.
+         if (typeof window.closeAll !== 'function') {
+             window.closeAll = function () {
+                 html.classList.remove('cart-sidebar-open', 'sidebar-mobile-open');
+             };
+         }
+
+         function closeSidebarMenu() {
+             html.classList.remove('sidebar-menu-open', 'cart-sidebar-open', 'sidebar-mobile-open');
+         }
+
+         // Clic en el overlay oscuro o en su icono de cierre.
+         var overlay = document.getElementById('woostify-overlay');
+         if (overlay) {
+             overlay.addEventListener('click', closeSidebarMenu);
+         }
+
+         // Tecla Escape.
+         document.addEventListener('keyup', function (e) {
+             if (e.key === 'Escape' || e.keyCode === 27) {
+                 closeSidebarMenu();
+             }
+         });
+
+         // Al pulsar un enlace real del menú, lo cerramos antes de navegar.
+         var menuLinks = document.querySelectorAll('.sidebar-menu .site-navigation a[href]:not([href="#"]):not([href=""])');
+         menuLinks.forEach(function (link) {
+             link.addEventListener('click', closeSidebarMenu);
+         });
+     })();
+ </script>
